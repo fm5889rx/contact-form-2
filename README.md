@@ -2,8 +2,8 @@
 
 ## 開発環境構築
 
-旧教材の通りに`git clone`で構築すると、M4 Macでは環境構築に失敗するので、<br>
-`Docker compose`を使わずに`Larsavel Sail`で開発することとした。<br>
+旧教材の通りに`git clone`で構築すると、M4 Macでは環境構築に失敗するので、`Docker compose`を<br>
+使わずに`Larsavel Sail`で開発することとした。
 
 ### 使用コマンド
 
@@ -52,7 +52,7 @@ DB_PASSWORD=password
 ```
 
 - phpMyAdminの追加
-`compose.yaml`ファイル中の`mysql`の記述の下に以下を追加。
+`compose.yaml`ファイル中の`mysql`の記述の下に以下を追加。<br>
 **インデントレベルに注意！**
 ```php
     phpmyadmin:
@@ -69,7 +69,7 @@ DB_PASSWORD=password
             - mysql
 ```
 
-- Sailの起動
+- Sailの起動<br>
 ※エイリアス登録済みとして記述
 ```
 sail up -d
@@ -86,7 +86,7 @@ sail artisan key:generate
 ブラウザで`http://localhost`にアクセスし、Laravelのウェルカム画面が表示されることを確認。
 
 - phpMyAdninの動作確認
-ブラウザで`http://localhost:8080`にアクセスし、phpMyAdminnが表示されていることを確認。
+ブラウザで`http://localhost:8080`にアクセスし、phpMyAdminnが表示されていることを確認。<br>
 ⚠️旧教材ではMySQLのバージョンが古くて、M4 Macではうまく構築されず、phpMyAdminが接続エラーになるため。
 
 
