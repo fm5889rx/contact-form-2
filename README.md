@@ -1,26 +1,20 @@
-# お問い合わせフォーム
+# お問い合わせフォーム（機能拡張版）
 
-## 開発環境構築
+## Ⅰ。開発環境構築
 
-旧教材の通りに`git clone`で構築すると、M4 Macでは環境構築に失敗するので、`Docker compose`を<br>
-使わずに`Larsavel Sail`で開発することとした。
-
+- 旧教材の通りに`git clone`で構築すると、M4 Macでは環境構築に失敗するので、<br>
+`Docker compose`を使わずに`Larsavel Sail`で開発することとした。
+- 元のお問い合わせフォームからの`clone`で作成していく。
 ### 使用コマンド
 
-- Laravelプロジェクトの作成
+- `git`イメージのクローン
 ```
-docker run --rm \
-    -u "$(id -u):$(id -g)" \
-    -v "$(pwd):/var/www/html" \
-    -w /var/www/html \
-    -e COMPOSER_CACHE_DIR=/tmp/composer_cache \
-    laravelsail/php82-composer:latest \
-    composer create-project laravel/laravel:^10.0 contact-form
+git clone git@githob.com:fm5889rx/contact-form.git contact-form-2
 ```
 
 - Laravel Sailをインストール
 ```
-cd contact-form
+cd contact-form-2
 docker run --rm \
     -u "$(id -u):$(id -g)" \
     -v "$(pwd):/var/www/html" \
@@ -28,6 +22,11 @@ docker run --rm \
     -e COMPOSER_CACHE_DIR=/tmp/composer_cache \
     laravelsail/php82-composer:latest \
     composer require laravel/sail --dev
+```
+
+- .envファイルのコピー
+```
+cp .env.sample .env
 ```
 
 - Sailの設定ファイルをパブリッシュ（MySQLを選択）
@@ -42,6 +41,7 @@ docker run --rm \
 ```
 
 - `.env`ファイルの確認
+内容が違っていたら、以下のように修正する。
 ```
 DB_CONNECTION=mysql
 DB_HOST=mysql
@@ -49,24 +49,6 @@ DB_PORT=3306
 DB_DATABASE=laravel
 DB_USERNAME=sail
 DB_PASSWORD=password
-```
-
-- phpMyAdminの追加
-`compose.yaml`ファイル中の`mysql`の記述の下に以下を追加。<br>
-**インデントレベルに注意！**
-```php
-    phpmyadmin:
-        image: 'phpmyadmin:latest'
-        ports:
-            - '${FORWARD_PHPMYADMIN_PORT:-8080}:80'
-        environment:
-            PMA_HOST: mysql
-            PMA_USER: '${DB_USERNAME}'
-            PMA_PASSWORD: '${DB_PASSWORD}'
-        networks:
-            - sail
-        depends_on:
-            - mysql
 ```
 
 - Sailの起動<br>
@@ -80,27 +62,63 @@ sail up -d
 sail artisan key:generate
 ```
 
+ - Laravel Fortifyのセットアップ
+ 1. Fortifyのインストール
+ ```
+ sail composer require laravel/fortify
+ ```
+ 2. Fortifyの設定ファイルを公開
+```
+sail artisan vendor:publish --provider="Laravel\Fortify\FortifyServiceProvider"
+```
+4. サービスプロバイダの登録
+`config/app.php`にFortifyサービスプロバイダを登録する。
+```php
+'providers' => [
+    // ...既存のプロバイダ
+
+    /*
+     * Application Service Providers...
+     */
+    App\Providers\AppServiceProvider::class,
+    // App\Providers\AuthServiceProvider::class,
+    // App\Providers\BroadcastServiceProvider::class,
+    App\Providers\EventServiceProvider::class,
+    App\Providers\RouteServiceProvider::class,
+    App\Providers\FortifyServiceProvider::class, // ← この行を追加
+])->toArray(),
+```
+
+
+- リポジトリの新規作成
+1. `＋`メニューから`New Repository`をクリックする。
+2. リポジトリ名を`contact-form-2`にする。
+3. Descriptionは入力しないか、後でアプリ概要がわかるようにアプリ名を日本語で記述。
+4. `public`/`Private`は`Public`のままにする。
+5. `Create repojitory`ボタンをクリックする。
+6. `Quick setup`のURL文字列をコピーする。
+7. ターミナルから以下のコマンドを**順番に**実行する。
+   ```
+   git init
+   git remote remove origin
+   git remote add origin git@github.com:fm5889rx/contact-form-2
+   git remote -v
+   ```
+   **↓**
+   ```
+   origin <git@githob.com>:fx5889rx/contact-form-2.git (fetch)
+   origin <git@githob.com>:fx5889rx/contact-form-2.git (push)
+   ```
+
+
 ### 動作確認
 
 - Laravelの動作確認
 ブラウザで`http://localhost`にアクセスし、Laravelのウェルカム画面が表示されることを確認。
 
 - phpMyAdninの動作確認
-ブラウザで`http://localhost:8080`にアクセスし、phpMyAdminnが表示されていることを確認。<br>
+ブラウザで`http://localhost:8080`にアクセスし、phpMyAdminが表示されていることを確認。<br>
 ⚠️旧教材ではMySQLのバージョンが古くて、M4 Macではうまく構築されず、phpMyAdminが接続エラーになるため。
 
 
-## 提供ファイルのインポート
-
-フロントエンドプログラムは、旧教材はHTML/CSS、新教材はTailwind CSSなので、
-こちらは旧教材のままインポートする。
-- `resource/views/index.blade.php`
-- `resource/views/confirm.blade.php`
-- `resource/views/thanks.blade.php`
-- `public/css/sanitize.css`
-- `public/css/index.css`
-- `public/css/confirm.css`
-- `public/css/thanks.css`
-
-<br>
-以降は旧教材に従って各機能を実装。
+# Ⅱ.機能一覧
