@@ -110,6 +110,14 @@ sail artisan vendor:publish --provider="Laravel\Fortify\FortifyServiceProvider"
    origin <git@githob.com>:fx5889rx/contact-form-2.git (push)
    ```
 
+- リポジトリの反映
+ターミナルから以下のコマンドを**順番に**実行する。
+   ```
+   git add .
+   git commit -m "git clone後の開発環境構築"
+   git push origin main
+   ```
+
 
 ### 動作確認
 
